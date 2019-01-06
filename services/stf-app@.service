@@ -1,0 +1,26 @@
+[Unit]
+Description=STF app
+After=rethinkdb-proxy-28015.service
+BindsTo=rethinkdb-proxy-28015.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=60s
+Restart=always
+RestartSec=60s
+ExecStartPre=/usr/bin/docker pull openstf/stf:latest
+ExecStartPre=-/usr/bin/docker kill %p-%i
+ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStart=/usr/bin/docker run --rm \
+  --name %p-%i \
+  --link rethinkdb-proxy-28015:rethinkdb \
+  -e "SECRET=katowicelab17!" \
+  -p %i:3000 \
+  openstf/stf:latest \
+  stf app --port 3000 \
+    --auth-url http://10.0.1.221/auth/ldap/ \
+    --websocket-url http://10.0.1.221/
+ExecStop=-/usr/bin/docker stop -t 10 %p-%i
+
+
+

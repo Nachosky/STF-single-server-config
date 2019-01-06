@@ -1,0 +1,22 @@
+[Unit]
+Description=RestartService
+After=docker.service
+
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 300
+
+ExecStart=/bin/systemctl start rethinkdb.service
+ExecStart=/bin/systemctl start stf-app@3100.service
+ExecStart=/bin/systemctl start stf-auth@3200.service
+ExecStart=/bin/systemctl start stf-api@3400.service
+ExecStart=/bin/systemctl start stf-processor@3500.service
+ExecStart=/bin/systemctl start stf-reaper.service
+ExecStart=/bin/systemctl start stf-websocket@3600.service
+ExecStart=/bin/systemctl start stf-provider@12345.service
+ExecStart=/bin/systemctl start stf-triproxy-dev.service
+ExecStart=/bin/systemctl start stf-triproxy-app.service
+
+[Install]
+WantedBy=multi-user.target
